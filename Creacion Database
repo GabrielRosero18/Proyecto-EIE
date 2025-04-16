@@ -1,0 +1,64 @@
+CREATE TABLE Usuarios (
+    id_usuario SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    edad INT NOT NULL,
+    identificacion VARCHAR(20) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    usuario_facebook VARCHAR(100)
+);
+
+
+CREATE TABLE Encuestas (
+    id_encuesta SERIAL PRIMARY KEY,
+    fecha DATE NOT NULL,
+    id_usuario INT NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+
+CREATE TABLE Respuestas (
+    id_respuesta SERIAL PRIMARY KEY,
+    id_encuesta INT NOT NULL,
+    pregunta TEXT NOT NULL,
+    respuesta TEXT NOT NULL,
+    FOREIGN KEY (id_encuesta) REFERENCES Encuestas(id_encuesta)
+);
+
+
+CREATE TABLE Interacciones (
+    id_interaccion SERIAL PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    tipo_interaccion VARCHAR(100) NOT NULL,
+    fecha TIMESTAMP NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+
+CREATE TABLE Tiempos_de_Uso (
+    id_tiempo SERIAL PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    tiempo_promedio_diario INTERVAL NOT NULL,
+    fecha_registro DATE NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+
+CREATE TABLE Bloqueos_de_Aplicacion (
+    id_bloqueo SERIAL PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    inicio_bloqueo TIMESTAMP NOT NULL,
+    fin_bloqueo TIMESTAMP NOT NULL,
+    motivo TEXT NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+
+CREATE TABLE Configuraciones_de_Usuario (
+    id_config SERIAL PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    idioma_preferido VARCHAR(50) NOT NULL,
+    notificaciones_activas BOOLEAN NOT NULL,
+    tiempo_maximo_uso INTERVAL NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
