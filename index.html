@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interestructurante - Control de uso de Facebook</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            width: 375px;
+            height: 812px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .container {
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 16px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+        }
+        
+        .auth-header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .app-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        
+        .auth-title {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+        
+        .auth-subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            border-radius: 5px;
+            width: 65%;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .rewards-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+        
+        .badge {
+            flex: 0 0 auto;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .badge i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .badge-label {
+            font-size: 0.7rem;
+        }
+        
+        .menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            border-top: 1px solid #ddd;
+            width: 375px;
+        }
+        
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--gray);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .menu-item.active {
+            color: var(--primary);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            animation: slideIn 0.5s ease;
+            width: 90%;
+        }
+        
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .notification.info {
+            border-left: 4px solid var(--success);
+        }
+        
+        @keyframes slideIn {
+            from { top: -100px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin: 20px 0;
+        }
+        
+        .limit-config {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .limit-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+        
+        .time-unit {
+            width: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+        
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .lang-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            text-align: center;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .setting-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 85%;
+            max-width: 350px;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .auth-form {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .stats-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .stats-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+        }
+        
+        .stats-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .week-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .week-nav {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: var(--box-shadow);
+            cursor: pointer;
+        }
+        
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .reward-item {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .reward-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .reward-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .reward-desc {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .reward-progress {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .reward-progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+        }
+        
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            height: 100%;
+        }
+        
+        .welcome-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .welcome-text {
+            font-size: 1rem;
+            margin-bottom: 40px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+        
+        .welcome-buttons {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .welcome-buttons .btn {
+            margin-bottom: 15px;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .form-error {
+            color: var(--warning);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de bienvenida -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-screen">
+            <div class="welcome-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1 class="welcome-title">Interestructurante</h1>
+            <p class="welcome-text">Controla tu tiempo en Facebook, establece límites de uso y mejora tu bienestar digital.</p>
+            
+            <div class="welcome-buttons">
+                <button class="btn btn-primary" onclick="showScreen('login-screen')">
+                    Iniciar Sesión
+                </button>
+                <button class="btn btn-outline" onclick="showScreen('register-screen')">
+                    Crear Cuenta
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla de inicio de sesión -->
+    <div id="login-screen" class="screen">
+        <header class="auth-header">
+            <i class="fas fa-sign-in-alt" style="font-size: 3rem; margin-bottom: 20px;"></i>
+            <h1 class="auth-title">Bienvenido</h1>
+            <p class="auth-subtitle">Ingresa a tu cuenta</p>
+        </header>
+        
+        <div class="container">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-user"></i> Iniciar sesión</h2>
+                
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-input" placeholder="tu@email.com" id="login-email">
+                        <div class="form-error" id="login-email-error">Ingresa un correo electrónico válido</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contraseña</label>
+                        <div class="password-container">
+                            <input type="password" class="form-input" placeholder="••••••••" id="login-password">
+                            <span class="toggle-password" onclick="togglePassword('login-password')">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="form-error" id="login-password-error">La contraseña es requerida</div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="login()">Iniciar sesión</button>
+                    
+                    <div class="auth-link">
+                        <a href="#" onclick="showScreen('register-screen')">¿No tienes cuenta? Regístrate</a>
+                    </div>
+                    
+                    <div class="auth-link">
+                        <a href="#" onclick="showScreen('welcome-screen')">Volver al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla de registro -->
+    <div id="register-screen" class="screen">
+        <header class="auth-header">
+            <i class="fas fa-user-plus" style="font-size: 3rem; margin-bottom: 20px;"></i>
+            <h1 class="auth-title">Crear cuenta</h1>
+            <p class="auth-subtitle">Comienza a controlar tu tiempo</p>
+        </header>
+        
+        <div class="container">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-user-circle"></i> Registrarse</h2>
+                
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label">Nombre completo</label>
+                        <input type="text" class="form-input" placeholder="Tu nombre" id="register-name">
+                        <div class="form-error" id="register-name-error">El nombre es requerido</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-input" placeholder="tu@email.com" id="register-email">
+                        <div class="form-error" id="register-email-error">Ingresa un correo electrónico válido</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contraseña</label>
+                        <div class="password-container">
+                            <input type="password" class="form-input" placeholder="••••••••" id="register-password">
+                            <span class="toggle-password" onclick="togglePassword('register-password')">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="form-error" id="register-password-error">La contraseña debe tener al menos 6 caracteres</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Confirmar contraseña</label>
+                        <div class="password-container">
+                            <input type="password" class="form-input" placeholder="••••••••" id="register-confirm-password">
+                            <span class="toggle-password" onclick="togglePassword('register-confirm-password')">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="form-error" id="register-confirm-password-error">Las contraseñas no coinciden</div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="register()">Crear cuenta</button>
+                    
+                    <div class="auth-link">
+                        <a href="#" onclick="showScreen('login-screen')">¿Ya tienes cuenta? Inicia sesión</a>
+                    </div>
+                    
+                    <div class="auth-link">
+                        <a href="#" onclick="showScreen('welcome-screen')">Volver al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla de inicio -->
+    <div id="home-screen" class="screen">
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">Interestructurante</h1>
+                <div class="user-avatar" id="user-avatar">US</div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Resumen de uso -->
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-pie"></i> Resumen de uso</h2>
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-value">45m</div>
+                        <div class="stat-label">Hoy</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">4.2h</div>
+                        <div class="stat-label">Esta semana</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">78%</div>
+                        <div class="stat-label">Objetivo</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Límite diario: 1h</span>
+                        <span>45m / 1h</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="usageChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Configuración de límites -->
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-sliders-h"></i> Límites de uso</h2>
+                <p>Establece tu límite diario de uso de Facebook</p>
+                
+                <div class="limit-config">
+                    <input type="number" class="limit-input" value="1">
+                    <select class="time-unit">
+                        <option>Minutos</option>
+                        <option selected>Horas</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary">Guardar cambios</button>
+            </div>
+            
+            <!-- Recompensas -->
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-trophy"></i> Recompensas</h2>
+                <p>Has ganado 3 insignias esta semana</p>
+                
+                <div class="rewards-container">
+                    <div class="badge">
+                        <i class="fas fa-medal"></i>
+                        <span class="badge-label">Inicio</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-star"></i>
+                        <span class="badge-label">3 días</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="badge-label">Meta 1</span>
+                    </div>
+                    <div class="badge" style="opacity: 0.5;">
+                        <i class="fas fa-crown"></i>
+                        <span class="badge-label">7 días</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="progress-info">
+                        <span>Puntos: 350</span>
+                        <span>Siguiente nivel: 500</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Menú inferior -->
+        <div class="menu">
+            <div class="menu-item active" onclick="showScreen('home-screen')">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('stats-screen')">
+                <i class="fas fa-chart-line"></i>
+                <span>Estadísticas</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('rewards-screen')">
+                <i class="fas fa-trophy"></i>
+                <span>Recompensas</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('settings-screen')">
+                <i class="fas fa-cog"></i>
+                <span>Ajustes</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla de estadísticas -->
+    <div id="stats-screen" class="screen">
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">Estadísticas</h1>
+                <div class="user-avatar" id="user-avatar-stats">US</div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="stats-tabs">
+                <div class="stats-tab active">Diario</div>
+                <div class="stats-tab">Semanal</div>
+                <div class="stats-tab">Mensual</div>
+            </div>
+            
+            <div class="week-selector">
+                <div class="week-nav"><i class="fas fa-chevron-left"></i></div>
+                <div style="font-weight: 500;">Semana 23 - 29 Mayo</div>
+                <div class="week-nav"><i class="fas fa-chevron-right"></i></div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-bar"></i> Tiempo de uso</h2>
+                
+                <div class="chart-container">
+                    <canvas id="statsChart"></canvas>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-value">4.2h</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">36m</div>
+                        <div class="stat-label">Promedio/día</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">-12%</div>
+                        <div class="stat-label">Vs. semana anterior</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-calendar-check"></i> Cumplimiento</h2>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Días dentro del límite</span>
+                        <span>5/7</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 71%; background: linear-gradient(90deg, var(--success), #2ecc71);"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Bloqueos aplicados</span>
+                        <span>2</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 29%; background: linear-gradient(90deg, var(--warning), #e74c3c);"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-clock"></i> Horarios de uso</h2>
+                
+                <div class="chart-container">
+                    <canvas id="timeChart"></canvas>
+                </div>
+                
+                <div style="text-align: center; margin-top: 10px; color: var(--gray); font-size: 0.9rem;">
+                    Mayor uso entre 19:00 - 22:00
+                </div>
+            </div>
+        </div>
+        
+        <!-- Menú inferior -->
+        <div class="menu">
+            <div class="menu-item" onclick="showScreen('home-screen')">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </div>
+            <div class="menu-item active" onclick="showScreen('stats-screen')">
+                <i class="fas fa-chart-line"></i>
+                <span>Estadísticas</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('rewards-screen')">
+                <i class="fas fa-trophy"></i>
+                <span>Recompensas</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('settings-screen')">
+                <i class="fas fa-cog"></i>
+                <span>Ajustes</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla de recompensas -->
+    <div id="rewards-screen" class="screen">
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">Recompensas</h1>
+                <div class="user-avatar" id="user-avatar-rewards">US</div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-star"></i> Progreso</h2>
+                
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Insignias</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">350</div>
+                        <div class="stat-label">Puntos</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Días seguidos</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Nivel 3</span>
+                        <span>350/500 puntos</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-medal"></i> Insignias</h2>
+                
+                <div class="rewards-grid">
+                    <div class="reward-item">
+                        <div class="reward-icon" style="color: #ffd700;"><i class="fas fa-medal"></i></div>
+                        <div class="reward-title">Iniciador</div>
+                        <div class="reward-desc">Primera semana</div>
+                        <div class="reward-progress">
+                            <div class="reward-progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-icon" style="color: #c0c0c0;"><i class="fas fa-star"></i></div>
+                        <div class="reward-title">Consistente</div>
+                        <div class="reward-desc">3 días seguidos</div>
+                        <div class="reward-progress">
+                            <div class="reward-progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-icon" style="color: #cd7f32;"><i class="fas fa-check-circle"></i></div>
+                        <div class="reward-title">Meta cumplida</div>
+                        <div class="reward-desc">5/7 días en límite</div>
+                        <div class="reward-progress">
+                            <div class="reward-progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-icon"><i class="fas fa-crown"></i></div>
+                        <div class="reward-title">Rey de la disciplina</div>
+                        <div class="reward-desc">7 días seguidos</div>
+                        <div class="reward-progress">
+                            <div class="reward-progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="reward-title">Veloz</div>
+                        <div class="reward-desc">Menos de 30min/día</div>
+                        <div class="reward-progress">
+                            <div class="reward-progress-fill" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-icon"><i class="fas fa-calendar"></i></div>
+                        <div class="reward-title">Mensual</div>
+                        <div class="reward-desc">30 días consecutivos</div>
+                        <div class="reward-progress">
+                            <div class="reward-progress-fill" style="width: 40%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-gift"></i> Recompensas disponibles</h2>
+                
+                <div class="rewards-container">
+                    <div class="badge" style="background: linear-gradient(135deg, #4cc9f0, #4361ee);">
+                        <i class="fas fa-coffee"></i>
+                        <span class="badge-label">Descuento 15%</span>
+                    </div>
+                    <div class="badge" style="background: linear-gradient(135deg, #f72585, #7209b7);">
+                        <i class="fas fa-book"></i>
+                        <span class="badge-label">E-book gratis</span>
+                    </div>
+                    <div class="badge" style="background: linear-gradient(135deg, #2ecc71, #4cc9f0); opacity: 0.5;">
+                        <i class="fas fa-headphones"></i>
+                        <span class="badge-label">1 mes premium</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn btn-outline">Canjear puntos</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Menú inferior -->
+        <div class="menu">
+            <div class="menu-item" onclick="showScreen('home-screen')">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('stats-screen')">
+                <i class="fas fa-chart-line"></i>
+                <span>Estadísticas</span>
+            </div>
+            <div class="menu-item active" onclick="showScreen('rewards-screen')">
+                <i class="fas fa-trophy"></i>
+                <span>Recompensas</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('settings-screen')">
+                <i class="fas fa-cog"></i>
+                <span>Ajustes</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla de ajustes -->
+    <div id="settings-screen" class="screen">
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">Ajustes</h1>
+                <div class="user-avatar" id="user-avatar-settings">US</div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-user"></i> Perfil</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-input" value="Usuario" id="profile-name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-input" value="usuario@ejemplo.com" id="profile-email">
+                </div>
+                
+                <button class="btn btn-primary" onclick="updateProfile()">Guardar cambios</button>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-bell"></i> Notificaciones</h2>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-bell" style="color: var(--accent);"></i>
+                        <span>Notificaciones push</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked id="push-notifications">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-envelope" style="color: var(--warning);"></i>
+                        <span>Reportes por email</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="email-reports">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-chart-bar" style="color: var(--success);"></i>
+                        <span>Reportes semanales</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked id="weekly-reports">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-globe"></i> Idioma</h2>
+                
+                <p>Idioma de la aplicación</p>
+                <div class="language-selector">
+                    <div class="lang-btn active" onclick="setLanguage('es')">Español</div>
+                    <div class="lang-btn" onclick="setLanguage('en')">English</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-shield-alt"></i> Privacidad</h2>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-database" style="color: var(--primary);"></i>
+                        <span>Recopilación de datos anónimos</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked id="data-collection">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-user-friends" style="color: var(--secondary);"></i>
+                        <span>Compartir logros</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="share-achievements">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-info-circle"></i> Acerca de</h2>
+                
+                <div class="setting-item">
+                    <span>Versión</span>
+                    <span style="color: var(--gray);">1.0.0</span>
+                </div>
+                
+                <div class="setting-item">
+                    <span>Términos de uso</span>
+                    <i class="fas fa-chevron-right" style="color: var(--gray);"></i>
+                </div>
+                
+                <div class="setting-item">
+                    <span>Política de privacidad</span>
+                    <i class="fas fa-chevron-right" style="color: var(--gray);"></i>
+                </div>
+                
+                <div class="setting-item">
+                    <span>Soporte</span>
+                    <i class="fas fa-chevron-right" style="color: var(--gray);"></i>
+                </div>
+            </div>
+            
+            <button class="btn btn-outline" onclick="logout()">Cerrar sesión</button>
+        </div>
+        
+        <!-- Menú inferior -->
+        <div class="menu">
+            <div class="menu-item" onclick="showScreen('home-screen')">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('stats-screen')">
+                <i class="fas fa-chart-line"></i>
+                <span>Estadísticas</span>
+            </div>
+            <div class="menu-item" onclick="showScreen('rewards-screen')">
+                <i class="fas fa-trophy"></i>
+                <span>Recompensas</span>
+            </div>
+            <div class="menu-item active" onclick="showScreen('settings-screen')">
+                <i class="fas fa-cog"></i>
+                <span>Ajustes</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de usuario (simulados)
+        let currentUser = null;
+        
+        // Función para cambiar entre pantallas
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            
+            // Actualizar menú activo
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Si no es una pantalla de autenticación, activar el ítem correspondiente en el menú
+            if (screenId !== 'login-screen' && screenId !== 'register-screen' && screenId !== 'welcome-screen') {
+                const menuItem = document.querySelector(`.menu-item[onclick="showScreen('${screenId}')"]`);
+                if (menuItem) {
+                    menuItem.classList.add('active');
+                }
+            }
+        }
+        
+        // Función para alternar visibilidad de contraseña
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = passwordInput.nextElementSibling.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // Función para validar email
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Función para registrar usuario
+        function register() {
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            
+            // Validaciones
+            let isValid = true;
+            
+            if (name === '') {
+                document.getElementById('register-name-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('register-name-error').style.display = 'none';
+            }
+            
+            if (!isValidEmail(email)) {
+                document.getElementById('register-email-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('register-email-error').style.display = 'none';
+            }
+            
+            if (password.length < 6) {
+                document.getElementById('register-password-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('register-password-error').style.display = 'none';
+            }
+            
+            if (password !== confirmPassword) {
+                document.getElementById('register-confirm-password-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('register-confirm-password-error').style.display = 'none';
+            }
+            
+            if (!isValid) return;
+            
+            // Simular registro exitoso
+            currentUser = {
+                name: name,
+                email: email,
+                initials: name.split(' ').map(n => n[0]).join('').toUpperCase()
+            };
+            
+            // Actualizar avatar de usuario
+            document.querySelectorAll('.user-avatar').forEach(el => {
+                el.textContent = currentUser.initials;
+            });
+            
+            // Actualizar información de perfil
+            document.getElementById('profile-name').value = currentUser.name;
+            document.getElementById('profile-email').value = currentUser.email;
+            
+            // Mostrar pantalla principal
+            showScreen('home-screen');
+            
+            // Mostrar notificación de éxito
+            showNotification('¡Cuenta creada con éxito! Bienvenido/a a Interestructurante.', 'success');
+        }
+        
+        // Función para iniciar sesión
+        // Lista de usuarios registrados (ejemplo)
+const users = [
+    {
+        name: "Administrador",
+        email: "admin@gmail.com",
+        password: "admin",
+        initials: "AD",
+        role: "admin"
+    }
+];
+
+// Función para iniciar sesión
+function login() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    // Validaciones
+    let isValid = true;
+    if (!isValidEmail(email)) {
+        document.getElementById('login-email-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('login-email-error').style.display = 'none';
+    }
+
+    if (password === '') {
+        document.getElementById('login-password-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('login-password-error').style.display = 'none';
+    }
+    if (!isValid) return;
+
+    // Buscar usuario en la lista
+    const foundUser = users.find(u => u.email === email && u.password === password);
+
+    if (!foundUser) {
+        showNotification("Credenciales incorrectas", "warning");
+        return;
+    }
+
+    // Guardar usuario logeado
+    currentUser = foundUser;
+
+    // Actualizar avatar de usuario
+    document.querySelectorAll('.user-avatar').forEach(el => {
+        el.textContent = currentUser.initials;
+    });
+
+    // Actualizar perfil
+    document.getElementById('profile-name').value = currentUser.name;
+    document.getElementById('profile-email').value = currentUser.email;
+
+    // Mostrar pantalla principal
+    showScreen('home-screen');
+
+    // Notificación
+    showNotification(`Sesión iniciada como ${currentUser.role}.`, 'success');
+}
+
+            
+            // Simular usuario (en una app real, esto vendría de una base de datos)
+            currentUser = {
+                name: 'Usuario Ejemplo',
+                email: email,
+                initials: 'UE'
+            };
+            
+            // Actualizar avatar de usuario
+            document.querySelectorAll('.user-avatar').forEach(el => {
+                el.textContent = currentUser.initials;
+            });
+            
+            // Actualizar información de perfil
+            document.getElementById('profile-name').value = currentUser.name;
+            document.getElementById('profile-email').value = currentUser.email;
+            
+            // Mostrar pantalla principal
+            showScreen('home-screen');
+            
+            // Mostrar notificación de éxito
+            showNotification('Sesión iniciada correctamente.', 'success');
+        
+        
+        // Función para cerrar sesión
+        function logout() {
+            currentUser = null;
+            showScreen('welcome-screen');
+        }
+        
+        // Función para actualizar perfil
+        function updateProfile() {
+            const name = document.getElementById('profile-name').value;
+            const email = document.getElementById('profile-email').value;
+            
+            if (currentUser) {
+                currentUser.name = name;
+                currentUser.email = email;
+                currentUser.initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                // Actualizar avatar de usuario
+                document.querySelectorAll('.user-avatar').forEach(el => {
+                    el.textContent = currentUser.initials;
+                });
+                
+                showNotification('Perfil actualizado correctamente.', 'success');
+            }
+        }
+        
+        // Función para establecer idioma
+        function setLanguage(lang) {
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (lang === 'es') {
+                buttons[0].classList.add('active');
+            } else {
+                buttons[1].classList.add('active');
+            }
+            
+            showNotification('Idioma cambiado correctamente.', 'success');
+        }
+        
+        // Función para mostrar notificación
+        function showNotification(message, type) {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.className = `notification ${type === 'success' ? 'info' : 'warning'}`;
+            
+            // Icono según el tipo
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            const iconColor = type === 'success' ? 'var(--success)' : 'var(--warning)';
+            
+            notification.innerHTML = `
+                <i class="fas ${icon}" style="color: ${iconColor};"></i>
+                <div>${message}</div>
+            `;
+            
+            // Agregar al cuerpo del documento
+            document.body.appendChild(notification);
+            
+            // Eliminar después de 3 segundos
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Inicializar gráficos cuando la pantalla esté visible
+        function initCharts() {
+            // Gráfico de uso semanal
+            const ctx = document.getElementById('usageChart').getContext('2d');
+            const usageChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Minutos de uso',
+                        data: [75, 45, 60, 35, 50, 70, 30],
+                        backgroundColor: 'rgba(67, 97, 238, 0.5)',
+                        borderColor: 'rgba(67, 97, 238, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 120,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'm';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de estadísticas
+            const statsCtx = document.getElementById('statsChart').getContext('2d');
+            const statsChart = new Chart(statsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Tiempo de uso (min)',
+                        data: [75, 45, 60, 35, 50, 70, 30],
+                        backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                        borderColor: 'rgba(67, 97, 238, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de horarios
+            const timeCtx = document.getElementById('timeChart').getContext('2d');
+            const timeChart = new Chart(timeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['6-9', '9-12', '12-15', '15-18', '18-21', '21-24'],
+                    datasets: [{
+                        label: 'Minutos de uso',
+                        data: [5, 15, 10, 20, 45, 25],
+                        backgroundColor: 'rgba(76, 201, 240, 0.7)',
+                        borderColor: 'rgba(76, 201, 240, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Inicializar los gráficos cuando se cargue la página
+        window.onload = function() {
+            initCharts();
+        };
+    </script>
+</body>
+</html>
