@@ -1,64 +1,69 @@
+CREATE DATABASE proyecto_iei;
+
+-- Tabla usuarios
 CREATE TABLE Usuarios (
     id_usuario SERIAL PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
     edad INT NOT NULL,
-    identificacion VARCHAR(20) NOT NULL,
-    telefono VARCHAR(20) NOT NULL,
+    genero VARCHAR(20),
+    email VARCHAR(100) NOT NULL,
+    idioma_preferido VARCHAR(50) NOT NULL,
+    frecuencia_uso_facebook VARCHAR(50),
     usuario_facebook VARCHAR(100)
 );
 
-
-CREATE TABLE Encuestas (
-    id_encuesta SERIAL PRIMARY KEY,
-    fecha DATE NOT NULL,
+--Tabla configuraciones_de_usuario
+CREATE TABLE Configuraciones_de_Usuario (
+    id_config SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
+    notificaciones_activas BOOLEAN NOT NULL,
+    tiempo_maximo_uso INT NOT NULL, -- cambiar INTERVAL por INT si es número de minutos
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
-
-CREATE TABLE Respuestas (
-    id_respuesta SERIAL PRIMARY KEY,
-    id_encuesta INT NOT NULL,
-    pregunta TEXT NOT NULL,
-    respuesta TEXT NOT NULL,
-    FOREIGN KEY (id_encuesta) REFERENCES Encuestas(id_encuesta)
-);
-
-
+--Tabla interacciones
 CREATE TABLE Interacciones (
     id_interaccion SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
     tipo_interaccion VARCHAR(100) NOT NULL,
-    fecha TIMESTAMP NOT NULL,
+    fecha DATE NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
-
+--Tabla tiempos_de_uso
 CREATE TABLE Tiempos_de_Uso (
     id_tiempo SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
-    tiempo_promedio_diario INTERVAL NOT NULL,
+    tiempo_promedio_diario INT NOT NULL, -- cambiar INTERVAL por INT si es número de minutos
     fecha_registro DATE NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
-
+--Tabla Bloqueos_de_Aplicacion
 CREATE TABLE Bloqueos_de_Aplicacion (
     id_bloqueo SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
     inicio_bloqueo TIMESTAMP NOT NULL,
     fin_bloqueo TIMESTAMP NOT NULL,
-    motivo TEXT NOT NULL,
+    motivo VARCHAR(255) NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
-
-CREATE TABLE Configuraciones_de_Usuario (
-    id_config SERIAL PRIMARY KEY,
+--Tabla Recompensas
+CREATE TABLE Recompensas (
+    id_recompensa SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
-    idioma_preferido VARCHAR(50) NOT NULL,
-    notificaciones_activas BOOLEAN NOT NULL,
-    tiempo_maximo_uso INTERVAL NOT NULL,
+    puntos INT NOT NULL,
+    tipo_insignia VARCHAR(100),
+    fecha_obtenida DATE NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+--Tabla perfil
+CREATE TABLE Perfil (
+    id_perfil SERIAL PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    foto_perfil VARCHAR(255),
+    biografia TEXT,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
