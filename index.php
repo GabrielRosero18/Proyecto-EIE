@@ -1,4 +1,4 @@
-<form method="post" action="register.php">
+<form method="post" action="index.php">
   <input type="text" name="nombre" placeholder="Nombre" required>
   <input type="number" name="edad" placeholder="Edad" required>
   
@@ -16,3 +16,4 @@
   
   <button type="submit">Crear cuenta</button>
 </form>
+
