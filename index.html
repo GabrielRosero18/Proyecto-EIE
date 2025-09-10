@@ -666,66 +666,102 @@
         </div>
     </div>
     
-    <!-- Pantalla de registro -->
-    <div id="register-screen" class="screen">
-        <header class="auth-header">
-            <i class="fas fa-user-plus" style="font-size: 3rem; margin-bottom: 20px;"></i>
-            <h1 class="auth-title">Crear cuenta</h1>
-            <p class="auth-subtitle">Comienza a controlar tu tiempo</p>
-        </header>
+   <!-- Pantalla Registro -->
+<div id="register-screen" class="screen">
+  <header class="auth-header">
+    <i class="fas fa-user-plus" style="font-size: 3rem; margin-bottom: 20px;"></i>
+    <h1 class="auth-title">Crear cuenta</h1>
+    <p class="auth-subtitle">Comienza a controlar tu tiempo</p>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title"><i class="fas fa-user-circle"></i> Registrarse</h2>
+
+      <div class="auth-form" id="register-form">
         
-        <div class="container">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-user-circle"></i> Registrarse</h2>
-                
-                <div class="auth-form">
-                    <div class="form-group">
-                        <label class="form-label">Nombre completo</label>
-                        <input type="text" class="form-input" placeholder="Tu nombre" id="register-name">
-                        <div class="form-error" id="register-name-error">El nombre es requerido</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-input" placeholder="tu@email.com" id="register-email">
-                        <div class="form-error" id="register-email-error">Ingresa un correo electrónico válido</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Contraseña</label>
-                        <div class="password-container">
-                            <input type="password" class="form-input" placeholder="••••••••" id="register-password">
-                            <span class="toggle-password" onclick="togglePassword('register-password')">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                        </div>
-                        <div class="form-error" id="register-password-error">La contraseña debe tener al menos 6 caracteres</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Confirmar contraseña</label>
-                        <div class="password-container">
-                            <input type="password" class="form-input" placeholder="••••••••" id="register-confirm-password">
-                            <span class="toggle-password" onclick="togglePassword('register-confirm-password')">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                        </div>
-                        <div class="form-error" id="register-confirm-password-error">Las contraseñas no coinciden</div>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="register()">Crear cuenta</button>
-                    
-                    <div class="auth-link">
-                        <a href="#" onclick="showScreen('login-screen')">¿Ya tienes cuenta? Inicia sesión</a>
-                    </div>
-                    
-                    <div class="auth-link">
-                        <a href="#" onclick="showScreen('welcome-screen')">Volver al inicio</a>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input type="text" class="form-input" placeholder="Tu nombre" id="register-name" name="nombre" />
+          <div class="form-error" id="register-name-error">El nombre es requerido</div>
         </div>
+        
+        <div class="form-group">
+          <label class="form-label">Edad</label>
+          <input type="number" class="form-input" placeholder="Tu edad" id="register-edad" name="edad" min="1" />
+          <div class="form-error" id="register-edad-error">Ingresa una edad válida</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Género</label>
+          <select class="form-input" id="register-genero" name="genero">
+            <option value="">Seleccione</option>
+            <option value="masculino">Masculino</option>
+            <option value="femenino">Femenino</option>
+            <option value="otro">Otro</option>
+          </select>
+          <div class="form-error" id="register-genero-error">Seleccione un género</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Idioma Preferido</label>
+          <input type="text" class="form-input" placeholder="Ej: Español, English" id="register-idioma" name="idioma" />
+          <div class="form-error" id="register-idioma-error">Ingresa un idioma</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Frecuencia de uso de Facebook</label>
+          <input type="text" class="form-input" placeholder="Ej: Diario, Semanal" id="register-frecuencia" name="frecuencia" />
+          <div class="form-error" id="register-frecuencia-error">Indica tu frecuencia de uso</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Usuario de Facebook</label>
+          <input type="text" class="form-input" placeholder="@usuario" id="register-facebook" name="usuarioFb" />
+          <!-- Campo opcional, por eso no hay mensaje de error -->
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" class="form-input" placeholder="tu@email.com" id="register-email" name="email" />
+          <div class="form-error" id="register-email-error">Ingresa un correo válido</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <div class="password-container">
+            <input type="password" class="form-input" placeholder="••••••••" id="register-password" name="password" />
+            <span class="toggle-password" onclick="togglePassword('register-password')">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+          <div class="form-error" id="register-password-error">La contraseña debe tener al menos 6 caracteres</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Confirmar contraseña</label>
+          <div class="password-container">
+            <input type="password" class="form-input" placeholder="••••••••" id="register-confirm-password" name="confirmPassword" />
+            <span class="toggle-password" onclick="togglePassword('register-confirm-password')">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+          <div class="form-error" id="register-confirm-password-error">Las contraseñas no coinciden</div>
+        </div>
+        
+        <button type="button" class="btn btn-primary" onclick="register()">Crear cuenta</button>
+
+        <div class="auth-link">
+          <a href="#" onclick="showScreen('login-screen')">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+        <div class="auth-link">
+          <a href="#" onclick="showScreen('welcome-screen')">Volver al inicio</a>
+        </div>
+        
+      </div>
     </div>
+  </div>
+</div>
     
     <!-- Pantalla de inicio -->
     <div id="home-screen" class="screen">
@@ -1288,41 +1324,75 @@
         function register() {
             const name = document.getElementById('register-name').value.trim();
             const email = document.getElementById('register-email').value.trim();
+            const edad = document.getElementById('register-edad').value.trim();
+            const genero = document.getElementById('register-genero').value;
+            const idioma = document.getElementById('register-idioma').value.trim();
+            const frecuencia = document.getElementById('register-frecuencia').value.trim();
+            const usuarioFb = document.getElementById('register-facebook').value.trim();
             const password = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('register-confirm-password').value;
-            
+
+
             // Validaciones
             let isValid = true;
-            
-            if (name === '') {
-                document.getElementById('register-name-error').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('register-name-error').style.display = 'none';
-            }
-            
-            if (!isValidEmail(email)) {
-                document.getElementById('register-email-error').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('register-email-error').style.display = 'none';
-            }
-            
-            if (password.length < 6) {
-                document.getElementById('register-password-error').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('register-password-error').style.display = 'none';
-            }
-            
-            if (password !== confirmPassword) {
-                document.getElementById('register-confirm-password-error').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('register-confirm-password-error').style.display = 'none';
-            }
-            
-            if (!isValid) return;
+
+    if (name === '') {
+        document.getElementById('register-name-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-name-error').style.display = 'none';
+    }
+
+    if (!email || !isValidEmail(email)) {
+        document.getElementById('register-email-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-email-error').style.display = 'none';
+    }
+
+    if (!edad || isNaN(edad) || Number(edad) <= 0) {
+        document.getElementById('register-edad-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-edad-error').style.display = 'none';
+    }
+
+    if (!genero) {
+        document.getElementById('register-genero-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-genero-error').style.display = 'none';
+    }
+
+    if (idioma === '') {
+        document.getElementById('register-idioma-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-idioma-error').style.display = 'none';
+    }
+
+    if (frecuencia === '') {
+        document.getElementById('register-frecuencia-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-frecuencia-error').style.display = 'none';
+    }
+
+    if (password.length < 6) {
+        document.getElementById('register-password-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-password-error').style.display = 'none';
+    }
+
+    if (password !== confirmPassword) {
+        document.getElementById('register-confirm-password-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('register-confirm-password-error').style.display = 'none';
+    }
+
+    if (!isValid) return;
             
             // Simular registro exitoso
             currentUser = {
