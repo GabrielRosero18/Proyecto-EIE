@@ -1,4 +1,4 @@
-<form method="POST" action="procesar_registro.php">
+<form method="POST" action="src/bakend/signup.php" class="auth-form">
   <input type="text" name="nombre" placeholder="Nombre" required>
   <input type="number" name="edad" placeholder="Edad" required min="1">
   
