@@ -9,7 +9,8 @@ CREATE TABLE Usuarios (
     email VARCHAR(100) NOT NULL,
     idioma_preferido VARCHAR(50) NOT NULL,
     frecuencia_uso_facebook VARCHAR(50),
-    usuario_facebook VARCHAR(100)
+    usuario_facebook VARCHAR(100),
+	contraseña VARCHAR(255) NOT NULL
 );
 
 --Tabla configuraciones_de_usuario
